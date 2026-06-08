@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      width: 340px;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background-color: #1a1a2e;
+      color: #e0e0e0;
+    }
+
+    .tabs {
+      display: flex;
+      background: #12122a;
+      border-bottom: 1px solid #2a2a4a;
+    }
+
+    .tab {
+      flex: 1;
+      padding: 10px 4px;
+      text-align: center;
+      font-size: 10px;
+      font-weight: 600;
+      color: #666688;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.3px;
+    }
+
+    .tab:hover { color: #aaaacc; }
+    .tab.active { color: #7c6aff; border-bottom: 2px solid #7c6aff; }
+
+    .panel { display: none; padding: 14px; }
+    .panel.active { display: block; }
+
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .dot { width: 9px; height: 9px; background: #7c6aff; border-radius: 50%; }
+    h3 { font-size: 15px; font-weight: 600; color: #ffffff; }
+
+    textarea, input[type="text"] {
+      width: 100%;
+      resize: none;
+      background: #16213e;
+      color: #e0e0e0;
+      border: 1px solid #2a2a4a;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 13px;
+      outline: none;
+      transition: border 0.2s;
+      font-family: 'Segoe UI', Arial, sans-serif;
+    }
+
+    textarea:focus, input:focus { border-color: #7c6aff; }
+    textarea::placeholder, input::placeholder { color: #555577; }
+
+    button {
+      width: 100%;
+      padding: 9px;
+      margin-top: 8px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      transition: opacity 0.2s;
+      color: white;
+    }
+
+    button:hover { opacity: 0.85; }
+
+    .btn-purple { background: linear-gradient(135deg, #7c6aff, #5a4fcf); }
+    .btn-blue { background: linear-gradient(135deg, #1a8aff, #0066cc); }
+    .btn-gray { background: #2a2a4a; color: #aaaacc !important; }
+    .btn-green { background: linear-gradient(135deg, #00b894, #007a5e); }
+    .btn-orange { background: linear-gradient(135deg, #fd7921, #c45000); }
+    .btn-pink { background: linear-gradient(135deg, #ff6aab, #cc3370); }
+    .btn-teal { background: linear-gradient(135deg, #00cec9, #007a78); }
+    .btn-yellow { background: linear-gradient(135deg, #fdcb6e, #c8960a); color: #1a1a2e !important; }
+
+    .output-box {
+      margin-top: 12px;
+      font-size: 13px;
+      color: #c0c0d0;
+      background: #16213e;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #2a2a4a;
+      min-height: 48px;
+      line-height: 1.7;
+      position: relative;
+    }
+
+    .output-box p { margin-bottom: 8px; }
+    .output-box p:last-child { margin-bottom: 0; }
+    .output-box ul { padding-left: 16px; margin-bottom: 8px; }
+    .output-box ul li { margin-bottom: 6px; }
+    .output-box ul li::marker { color: #7c6aff; }
+    .output-box strong { color: #ffffff; font-weight: 600; }
+    .output-box h1, .output-box h2, .output-box h3 { color: #ffffff; margin-bottom: 8px; margin-top: 4px; }
+    .output-box code { background: #0d0d1f; color: #a78bfa; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 12px; }
+    .output-box pre { background: #0d0d1f; padding: 10px; border-radius: 6px; overflow-x: auto; margin-bottom: 8px; }
+    .output-box pre code { background: none; padding: 0; }
+
+    .status-text { color: #555577; font-style: italic; font-size: 12px; }
+
+    .copy-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: auto;
+      padding: 3px 8px;
+      margin: 0;
+      font-size: 11px;
+      background: #2a2a4a;
+      color: #aaaacc;
+      border-radius: 4px;
+    }
+
+    .copy-btn:hover { background: #3a3a5a; opacity: 1; }
+
+    .hint { font-size: 11px; color: #555577; margin-top: 6px; }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+    .grid-2 button { margin-top: 0; }
+
+    /* Saved summaries */
+    .saved-item {
+      background: #16213e;
+      border: 1px solid #2a2a4a;
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 8px;
+      font-size: 12px;
+    }
+
+    .saved-item-title {
+      color: #7c6aff;
+      font-weight: 600;
+      margin-bottom: 4px;
+      font-size: 11px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .saved-item-url {
+      color: #444466;
+      font-size: 10px;
+      margin-bottom: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .saved-item-text { color: #aaaacc; line-height: 1.5; }
+
+    .saved-item-actions { display: flex; gap: 6px; margin-top: 8px; }
+    .saved-item-actions button { margin-top: 0; font-size: 11px; padding: 4px 8px; }
+
+    .empty-state { color: #555577; font-size: 13px; text-align: center; margin-top: 30px; }
+
+    /* Badge */
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .badge-green { background: #003d2e; color: #00b894; }
+    .badge-red { background: #3d0010; color: #ff6aab; }
+    .badge-yellow { background: #3d2e00; color: #fdcb6e; }
+    .badge-blue { background: #001a3d; color: #1a8aff; }
+  </style>
+</head>
+<body>
+
+  <div class="tabs">
+    <div class="tab active" data-tab="main">Chat</div>
+    <div class="tab" data-tab="tools">Tools</div>
+    <div class="tab" data-tab="saved">Saved</div>
+  </div>
+
+  <!-- MAIN TAB -->
+  <div class="panel active" id="tab-main">
+    <div class="header" style="margin-top:4px">
+      <div class="dot"></div>
+      <h3>hi person</h3>
+    </div>
+    <button id="clear-chat-btn" class="btn-gray">Clear Chat</button>
+    <textarea id="user-input" rows="3" placeholder="Type a prompt or text here..."></textarea>
+    <button id="submit-btn" class="btn-purple">Process with AI</button>
+    <button id="summarize-btn" class="btn-blue">Summarize This Page</button>
+    <div class="output-box" id="output">
+      <span class="status-text">Output will appear here...</span>
+      <button class="copy-btn" data-target="output">Copy</button>
+    </div>
+  </div>
+
+  <!-- TOOLS TAB -->
+  <div class="panel" id="tab-tools">
+    <div class="header" style="margin-top:4px">
+      <div class="dot"></div>
+      <h3>Page Tools</h3>
+    </div>
+    <p class="hint" style="margin-bottom:10px">All tools analyze the page you're currently on.</p>
+
+    <div class="grid-2">
+      <button id="credibility-btn" class="btn-green">🔍 Credibility Check</button>
+      <button id="bias-btn" class="btn-orange">⚖️ Article vs Opinion</button>
+      <button id="sources-btn" class="btn-pink">📚 Source Finder</button>
+      <button id="language-btn" class="btn-teal">🌐 Detect Language</button>
+      <button id="compare-btn" class="btn-yellow" style="grid-column: span 2;">🔀 Compare With Another Page</button>
+    </div>
+
+    <div id="compare-url-section" style="display:none; margin-top:10px;">
+      <input type="text" id="compare-url-input" placeholder="Paste the second page URL here..." />
+      <button id="compare-go-btn" class="btn-yellow" style="color:#1a1a2e !important;">Compare Now</button>
+    </div>
+
+    <div class="output-box" id="tools-output" style="margin-top:12px">
+      <span class="status-text">Pick a tool above...</span>
+      <button class="copy-btn" data-target="tools-output">Copy</button>
+    </div>
+
+    <button id="save-summary-btn" class="btn-green" style="margin-top:8px; display:none;">💾 Save This Result</button>
+  </div>
+
+  <!-- SAVED TAB -->
+  <div class="panel" id="tab-saved">
+    <div class="header" style="margin-top:4px">
+      <div class="dot"></div>
+      <h3>Saved Summaries</h3>
+    </div>
+    <button id="clear-saved-btn" class="btn-gray">Clear All Saved</button>
+    <div id="saved-list" style="margin-top:12px"></div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
